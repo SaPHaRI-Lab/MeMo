@@ -13,7 +13,7 @@ import math
 import h5py
 from pathlib import Path
 import numpy as np
-import cv2
+import cv2, csv
 import mujoco 
 
 def main():
@@ -85,7 +85,17 @@ def main():
                 baxter_frame[joint_mapping[joint_name]] = joint_angle
         baxter_joints.append(baxter_frame)
 
-    print(baxter_joints)
+    # print(baxter_joints)
+    import json
+    with open("gestures.csv", 'w') as gestures:
+        # writer = csv.writer(gestures, delimiter=" ")
+        
+        for row in baxter_joints:
+            # print(row)
+            cssv = ",".join(f'"{key}":{val}' for key, val in row.items())
+            print("{" + cssv + "}")
+            gestures.write("{" + cssv + "}\n")
+    
     return baxter_joints
 if __name__ == "__main__":
     main()
