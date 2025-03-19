@@ -13,7 +13,7 @@ import math
 import h5py
 from pathlib import Path
 import numpy as np
-import cv2, csv
+import cv2, csv, imageio
 import mujoco 
 
 def main():
@@ -84,9 +84,8 @@ def main():
             if joint_mapping.get(joint_name, 0) != 0:
                 baxter_frame[joint_mapping[joint_name]] = joint_angle
         baxter_joints.append(baxter_frame)
-
     # print(baxter_joints)
-    import json
+
     with open("gestures.csv", 'w') as gestures:
         # writer = csv.writer(gestures, delimiter=" ")
         
@@ -95,12 +94,12 @@ def main():
             cssv = ",".join(f'"{key}":{val}' for key, val in row.items())
             print("{" + cssv + "}")
             gestures.write("{" + cssv + "}\n")
-    
-    return baxter_joints
+    env.close()
+    return frames
 if __name__ == "__main__":
-    main()
+    frames = main()
+    imageio.mimsave("output.gif", frames, fps=15)  # Adjust fps as needed
     # for frame in frames:
     #     cv2.imshow("Orig Frame", frame)
     #     if cv2.waitKey(0) & 0xFF == ord('q'):
     #         break
-    # env.close()
